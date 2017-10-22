@@ -1,4 +1,4 @@
-package Main;
+package runner;
 
 public class Word {
 	public String word1;

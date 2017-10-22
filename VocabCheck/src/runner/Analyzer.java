@@ -1,4 +1,4 @@
-package Main;
+package runner;
 
 import java.util.List;
 import java.util.Scanner;
@@ -8,12 +8,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class Main {
+public class Analyzer {
 	public static String specialTrim(String word) {
-		return word.replace("¬", "").replace(".", "").replace(",", "").replace("!", "").replace("?", "").replace(":", "")
-				.replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("%", "").replace("”", "")
-				.replace("’", "").replace("(", "").replace(")", "").replace("*", "").replace("…", "").replace("•", "")
-				.toLowerCase();
+		return word.replace("¬", "").replace(".", "").replace(",", "").replace("!", "").replace("?", "")
+				.replace(":", "").replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("%", "")
+				.replace("”", "").replace("’", "").replace("(", "").replace(")", "").replace("*", "").replace("…", "")
+				.replace("•", "").toLowerCase();
 	}
 
 	public static List<Word> readFile(File file) throws FileNotFoundException {
@@ -21,7 +21,7 @@ public class Main {
 		long wordCounter = 0;
 
 		// Read a text file into the word list
-		System.out.println("Reading the text file:");
+		System.out.println("Reading the text file...");
 		Scanner s = null;
 		try {
 			s = new Scanner(file);
@@ -56,7 +56,7 @@ public class Main {
 	public static void analyzeFile(List<Word> wordList) {
 		long wordCounter = 0;
 
-		System.out.println("Alayzing the text file:");
+		System.out.println("Alayzing the text file...");
 		System.out.println("(The speed will increase, so please be patient!)");
 		for (int i = 0; i < wordList.size(); i++) {
 			for (int j = i + 1; j < wordList.size(); j++) {
@@ -67,9 +67,8 @@ public class Main {
 					String wordj = wordList.get(j).word1;
 					String stubi = wordList.get(i).stub1;
 					String stubj = wordList.get(j).stub1;
-					if (stubi.equals(stubj)
-					|| (stubj.length() > 3 && wordi.startsWith(stubj))
-				    || (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
+							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA1++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA1 = true;
@@ -84,9 +83,8 @@ public class Main {
 					String wordj = wordList.get(j).word2;
 					String stubi = wordList.get(i).stub2;
 					String stubj = wordList.get(j).stub2;
-					if (stubi.equals(stubj)
-					|| (stubj.length() > 3 && wordi.startsWith(stubj))
-				    || (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
+							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA2++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA2 = true;
@@ -101,9 +99,8 @@ public class Main {
 					String wordj = wordList.get(j).word3;
 					String stubi = wordList.get(i).stub3;
 					String stubj = wordList.get(j).stub3;
-					if (stubi.equals(stubj)
-					|| (stubj.length() > 3 && wordi.startsWith(stubj))
-				    || (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
+							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA3++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA3 = true;
@@ -206,8 +203,8 @@ public class Main {
 			for (int j = i - 300; j < i; j++) {
 				if (j < 0)
 					continue;
-				if (wordList.get(i).word1.equals(""))
-					continue;
+//				if (wordList.get(i).word1.equals(""))
+//					continue;
 				if (wordList.get(i).word1.equals(wordList.get(j).word1)
 						&& wordList.get(i).word2.equals(wordList.get(j).word2)) {
 					noList = true;
@@ -238,8 +235,8 @@ public class Main {
 			for (int j = i - 300; j < i; j++) {
 				if (j < 0)
 					continue;
-				if (wordList.get(i).word1.equals(""))
-					continue;
+//				if (wordList.get(i).word1.equals(""))
+//					continue;
 				if (wordList.get(i).word1.equals(wordList.get(j).word1)
 						&& wordList.get(i).word2.equals(wordList.get(j).word2)
 						&& wordList.get(i).word3.equals(wordList.get(j).word3)) {
@@ -320,13 +317,14 @@ public class Main {
 		System.out.println("=====================");
 		System.out.println("GLOBAL SINGLE MATCHES");
 		System.out.println("=====================");
-		System.out.println("(Words that are used often throughout the text. Shorter words need to be more frequent to get listed.)");
+		System.out.println(
+				"(Words that are used often throughout the text. Shorter words need to be more frequent to get listed.)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA1 < 3)
 				continue;
-			if (wordList.get(i).word1.equals(""))
-				continue;
-			if (wordList.get(i).word1.length() < 3 && wordList.get(i).matchA1 < wordList.size() / 250)
+//			if (wordList.get(i).word1.equals(""))
+//				continue;
+			if (wordList.get(i).variant1.length() < 4)
 				continue;
 			if (wordList.get(i).word1.length() < 6 && wordList.get(i).matchA1 < wordList.size() / 500)
 				continue;
@@ -352,8 +350,8 @@ public class Main {
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA2 < 3)
 				continue;
-			if (wordList.get(i).word1.equals(""))
-				continue;
+//			if (wordList.get(i).word1.equals(""))
+//				continue;
 			if (wordList.get(i).matchA2 < wordList.size() / 5000)
 				continue;
 			System.out.println(wordList.get(i).matchA2 + ": " + wordList.get(i).word2 + wordList.get(i).variant2);
@@ -379,7 +377,7 @@ public class Main {
 			if (wordList.get(i).word1.equals(""))
 				continue;
 			if (wordList.get(i).matchA3 < wordList.size() / 7000)
-				continue;			
+				continue;
 			System.out.println(wordList.get(i).matchA3 + ": " + wordList.get(i).word3 + wordList.get(i).variant3);
 		}
 	}
@@ -396,12 +394,12 @@ public class Main {
 		System.out.println("========================");
 		System.out.println("GLOBAL QUADRUPLE MATCHES");
 		System.out.println("========================");
-		System.out.println("(Combinations of four words that are used more than twice throughout the text.)");
+		System.out.println("(Combinations of four words that are used more than once throughout the text.)");
 		for (int i = 0; i < wordList.size(); i++) {
-			if (wordList.get(i).matchA4 < 3)
+			if ((wordList.get(i).matchA4 < 2) || ((wordList.get(i).matchA4 == 2) && (wordList.get(i).word1.length() < 4)))
 				continue;
-			if (wordList.get(i).word1.equals(""))
-				continue;		
+//			if (wordList.get(i).word1.equals(""))
+//				continue;
 			System.out.println(wordList.get(i).matchA4 + ": " + wordList.get(i).word4 + wordList.get(i).variant4);
 		}
 	}
@@ -421,11 +419,17 @@ public class Main {
 		System.out.println("THE END");
 		System.out.println("=======");
 	}
-	
-	public static void main(String[] args) throws FileNotFoundException {
+
+	public static String fileName = "c:/temp/textfile.txt";
+
+	public static void analyze() throws FileNotFoundException {
 		List<Word> wordList = new ArrayList<Word>();
-		File file = new File("c:/temp/textfile.txt");
+		File file = new File(fileName);
 		wordList = readFile(file);
 		fullAnalysis(wordList);
+	}
+
+	public static void main(String[] args) throws FileNotFoundException {
+		analyze();
 	}
 }
