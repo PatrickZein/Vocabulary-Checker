@@ -17,25 +17,34 @@ public class Word {
 	boolean checkA1, checkA2, checkA3, checkA4, check31, check32, check33, check34;
 	int matchA1, matchA2, matchA3, matchA4, match31, match32, match33, match34;
 
+	public String phonetic(String s) {
+		return s.replaceAll("ge", "je").replaceAll("gi", "ji").replaceAll("gy", "jy").replaceAll("gä", "jä")
+				.replaceAll("gö", "jö").replaceAll("ke", "tje").replaceAll("ki", "tji").replaceAll("ky", "tjy")
+				.replaceAll("kä", "tjä").replaceAll("kö", "tjö").replaceAll("a", "e").replaceAll("i", "e")
+				.replaceAll("o", "o").replaceAll("u", "i").replaceAll("ü", "i").replaceAll("y", "i")
+				.replaceAll("å", "o").replaceAll("ä", "a").replaceAll("ö", "o").replaceAll("ee", "e")
+				.replaceAll("ee", "e").replaceAll("och", "ok").replaceAll("ch", "tj").replaceAll("kj", "tj")
+				.replaceAll("sch", "sj").replaceAll("skj", "sj").replaceAll("stj", "sj").replaceAll("q", "k")
+				.replaceAll("ck", "k");
+	}
+
 	public Word(String w1, String w2, String w3, String w4) {
-		// "Stubs" är ett slags ordstammar, som möjliggör viss matching av böjningsformer
+		// "Stubs" är ett slags ordstammar, som möjliggör viss matching av
+		// böjningsformer
 		String stub1, stub2, stub3, stub4 = new String("");
-		if (w1.length() > 3)
-			stub1 = w1.substring(0, w1.length() - 2);
-		else
-			stub1 = w1;
-		if (w2.length() > 3)
-			stub2 = w2.substring(0, w2.length() - 2);
-		else
-			stub2 = w2;
-		if (w3.length() > 3)
-			stub3 = w3.substring(0, w3.length() - 2);
-		else
-			stub3 = w3;
-		if (w4.length() > 3)
-			stub4 = w4.substring(0, w4.length() - 2);
-		else
-			stub4 = w4;
+		stub1 = phonetic(w1);
+		stub2 = phonetic(w2);
+		stub3 = phonetic(w3);
+		stub4 = phonetic(w4);
+
+		if (stub1.length() > 3)
+			stub1 = stub1.substring(0, stub1.length() - 2);
+		if (stub2.length() > 3)
+			stub2 = stub2.substring(0, stub2.length() - 2);
+		if (stub3.length() > 3)
+			stub3 = stub3.substring(0, stub3.length() - 2);
+		if (stub4.length() > 3)
+			stub4 = stub4.substring(0, stub4.length() - 2);
 		this.stub1 = stub1;
 		this.stub2 = stub1 + " " + stub2;
 		this.stub3 = stub1 + " " + stub2 + " " + stub3;

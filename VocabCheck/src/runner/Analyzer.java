@@ -10,10 +10,10 @@ import java.util.Comparator;
 
 public class Analyzer {
 	public static String specialTrim(String word) {
-		return word.replace("¬", "").replace(".", "").replace(",", "").replace("!", "").replace("?", "")
-				.replace(":", "").replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("%", "")
-				.replace("”", "").replace("’", "").replace("(", "").replace(")", "").replace("*", "").replace("…", "")
-				.replace("•", "").toLowerCase();
+		return word.toLowerCase().replace("¬", "").replace(",", "").replace(".", "").replace("!", "").replace("?", "")
+				.replace(":", "").replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("+", "")
+				.replace("%", "").replace("”", "").replace("’", "").replace("(", "").replace(")", "").replace("*", "")
+				.replace("…", "").replace("•", "");
 	}
 
 	public static List<Word> readFile(File file) throws FileNotFoundException {
@@ -24,7 +24,7 @@ public class Analyzer {
 		System.out.println("Reading the text file...");
 		Scanner s = null;
 		try {
-			s = new Scanner(file);
+			s = new Scanner(file, "UTF-8");
 		} catch (FileNotFoundException e) {
 			throw new FileNotFoundException("File not found!");
 		}
@@ -203,8 +203,8 @@ public class Analyzer {
 			for (int j = i - 300; j < i; j++) {
 				if (j < 0)
 					continue;
-//				if (wordList.get(i).word1.equals(""))
-//					continue;
+				// if (wordList.get(i).word1.equals(""))
+				// continue;
 				if (wordList.get(i).word1.equals(wordList.get(j).word1)
 						&& wordList.get(i).word2.equals(wordList.get(j).word2)) {
 					noList = true;
@@ -235,8 +235,8 @@ public class Analyzer {
 			for (int j = i - 300; j < i; j++) {
 				if (j < 0)
 					continue;
-//				if (wordList.get(i).word1.equals(""))
-//					continue;
+				// if (wordList.get(i).word1.equals(""))
+				// continue;
 				if (wordList.get(i).word1.equals(wordList.get(j).word1)
 						&& wordList.get(i).word2.equals(wordList.get(j).word2)
 						&& wordList.get(i).word3.equals(wordList.get(j).word3)) {
@@ -322,8 +322,8 @@ public class Analyzer {
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA1 < 3)
 				continue;
-//			if (wordList.get(i).word1.equals(""))
-//				continue;
+			// if (wordList.get(i).word1.equals(""))
+			// continue;
 			if (wordList.get(i).variant1.length() < 4)
 				continue;
 			if (wordList.get(i).word1.length() < 6 && wordList.get(i).matchA1 < wordList.size() / 500)
@@ -350,8 +350,8 @@ public class Analyzer {
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA2 < 3)
 				continue;
-//			if (wordList.get(i).word1.equals(""))
-//				continue;
+			// if (wordList.get(i).word1.equals(""))
+			// continue;
 			if (wordList.get(i).matchA2 < wordList.size() / 5000)
 				continue;
 			System.out.println(wordList.get(i).matchA2 + ": " + wordList.get(i).word2 + wordList.get(i).variant2);
@@ -396,10 +396,11 @@ public class Analyzer {
 		System.out.println("========================");
 		System.out.println("(Combinations of four words that are used more than once throughout the text.)");
 		for (int i = 0; i < wordList.size(); i++) {
-			if ((wordList.get(i).matchA4 < 2) || ((wordList.get(i).matchA4 == 2) && (wordList.get(i).word1.length() < 4)))
+			if ((wordList.get(i).matchA4 < 2)
+					|| ((wordList.get(i).matchA4 == 2) && (wordList.get(i).word1.length() < 4)))
 				continue;
-//			if (wordList.get(i).word1.equals(""))
-//				continue;
+			// if (wordList.get(i).word1.equals(""))
+			// continue;
 			System.out.println(wordList.get(i).matchA4 + ": " + wordList.get(i).word4 + wordList.get(i).variant4);
 		}
 	}
@@ -420,7 +421,7 @@ public class Analyzer {
 		System.out.println("=======");
 	}
 
-	public static String fileName = "c:/temp/textfile.txt";
+	public static String fileName = System.getProperty("user.dir") + "/src/runner/analyzefile.txt";
 
 	public static void analyze() throws FileNotFoundException {
 		List<Word> wordList = new ArrayList<Word>();
