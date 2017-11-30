@@ -28,12 +28,23 @@ public class Tester {
 		}
 		System.out.println("Wordlist size: " + wordList.size());
 	}
-	
+
 	@Test
 	public void specialTrimTest() {
 		String str1 = Analyzer.specialTrim("abc-~,.!?");
 		String str2 = Analyzer.specialTrim("%():;*abc");
 		assertEquals(str1, str2);
+	}
+
+	@Test
+	public void testVowelTrue() {
+		assertTrue(Analyzer.isVowel("a") && Analyzer.isVowel("e") && Analyzer.isVowel("i") && Analyzer.isVowel("o")
+				&& Analyzer.isVowel("u"));
+	}
+
+	@Test
+	public void testVowelFalse() {
+		assertFalse(Analyzer.isVowel("b"));
 	}
 
 	@Test
@@ -77,11 +88,11 @@ public class Tester {
 		wordList.add(new Word(word4, word3, word1, word1));
 		wordList.add(new Word(word4, word3, word5, word1));
 		wordList.add(new Word(word4, word3, word1, word5));
-		wordList.add(new Word("a", word3  + "ab", word1, word1));
+		wordList.add(new Word("a", word3 + "ab", word1, word1));
 		wordList.add(new Word(word4, "b", word1 + "ab", word1));
 		wordList.add(new Word(word4, word3, "c", word1 + "ab"));
 		wordList.add(new Word(word4 + "ab", word3, "d", word5));
-		
+
 		wordList.add(new Word(word8, word7, word6, word5));
 		wordList.add(new Word(word8 + "xyzy", word7, word6, word5));
 		wordList.add(new Word(word8, word7 + "xyzy", word6, word5));
@@ -107,7 +118,11 @@ public class Tester {
 
 	@Test
 	public void fullTextAnalysisTest() throws FileNotFoundException {
-		Analyzer.fileName = System.getProperty("user.dir") + "/src/Test/textfile.txt";
+		short k = 9;
+		int i = 9;
+		Boolean b = (k == i);
+		
+		Analyzer.fileName = System.getProperty("user.dir") + "/src/test/textfile.txt";
 		Analyzer.analyze();
 	}
 }

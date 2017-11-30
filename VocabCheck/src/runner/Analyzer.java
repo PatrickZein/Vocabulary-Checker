@@ -11,9 +11,16 @@ import java.util.Comparator;
 public class Analyzer {
 	public static String specialTrim(String word) {
 		return word.toLowerCase().replace("¬", "").replace(",", "").replace(".", "").replace("!", "").replace("?", "")
-				.replace(":", "").replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("+", "")
-				.replace("%", "").replace("”", "").replace("’", "").replace("(", "").replace(")", "").replace("*", "")
-				.replace("…", "").replace("•", "");
+				.replace(":a", "").replace(":e", "").replace(":", "").replace(";", "").replace("~", "").replace("-", "").replace("–", "").replace("+", "")
+				.replace("%", "").replace("”", "").replace("’", "").replace("‘", "").replace("(", "").replace(")", "").replace("*", "")
+				.replace("#", "").replace("/", "").replace("\\", "").replace("…", "").replace("•", "");
+	}
+
+	public static boolean isVowel(String c) {
+		if (c.equals("a") || c.equals("e") || c.equals("i") || c.equals("o") || c.equals("u"))
+			return true;
+		else
+			return false;
 	}
 
 	public static List<Word> readFile(File file) throws FileNotFoundException {
@@ -57,7 +64,6 @@ public class Analyzer {
 		long wordCounter = 0;
 
 		System.out.println("Alayzing the text file...");
-		System.out.println("(The speed will increase, so please be patient!)");
 		for (int i = 0; i < wordList.size(); i++) {
 			for (int j = i + 1; j < wordList.size(); j++) {
 				// Compare word[i] with all following word[j]:
@@ -67,8 +73,10 @@ public class Analyzer {
 					String wordj = wordList.get(j).word1;
 					String stubi = wordList.get(i).stub1;
 					String stubj = wordList.get(j).stub1;
-					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
-							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (wordi.length() >= wordj.length() * 2 || wordj.length() >= wordi.length() * 2)
+						continue;
+					if (stubi.equals(stubj) || (stubj.length() > 2 && wordi.startsWith(stubj))
+							|| (stubi.length() > 2 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA1++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA1 = true;
@@ -83,8 +91,10 @@ public class Analyzer {
 					String wordj = wordList.get(j).word2;
 					String stubi = wordList.get(i).stub2;
 					String stubj = wordList.get(j).stub2;
-					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
-							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (wordi.length() >= wordj.length() * 2 || wordj.length() >= wordi.length() * 2)
+						continue;
+					if (stubi.equals(stubj) || (stubj.length() > 2 && wordi.startsWith(stubj))
+							|| (stubi.length() > 2 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA2++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA2 = true;
@@ -99,8 +109,8 @@ public class Analyzer {
 					String wordj = wordList.get(j).word3;
 					String stubi = wordList.get(i).stub3;
 					String stubj = wordList.get(j).stub3;
-					if (stubi.equals(stubj) || (stubj.length() > 3 && wordi.startsWith(stubj))
-							|| (stubi.length() > 3 && wordj.startsWith(stubi))) {
+					if (stubi.equals(stubj) || (stubj.length() > 2 && wordi.startsWith(stubj))
+							|| (stubi.length() > 2 && wordj.startsWith(stubi))) {
 						wordList.get(i).matchA3++;
 						// Mark the secondary object as checked
 						wordList.get(j).checkA3 = true;
@@ -158,7 +168,7 @@ public class Analyzer {
 		System.out.println("====================");
 		System.out.println("LOCAL SINGLE MATCHES");
 		System.out.println("====================");
-		System.out.println("(Words that are used more than 2 times within a single A5-page of text.)");
+		System.out.println("(Words used often within a single A5-page of text.)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).match31 < 5)
 				continue;
@@ -191,7 +201,7 @@ public class Analyzer {
 		System.out.println("====================");
 		System.out.println("LOCAL DOUBLE MATCHES");
 		System.out.println("====================");
-		System.out.println("(Word combinations that are used more than 3 times within a single A5-page of text.)");
+		System.out.println("(Word combinations used often within a single A5-page of text.)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).match32 < 4)
 				continue;
@@ -223,7 +233,7 @@ public class Analyzer {
 		System.out.println("=====================");
 		System.out.println("LOCAL TRIPPLE MATCHES");
 		System.out.println("=====================");
-		System.out.println("(Word combinations that are used more than twice within a single A5-page of text.)");
+		System.out.println("(Word combinations used often twice within a single A5-page of text.)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).match33 < 3)
 				continue;
@@ -256,52 +266,71 @@ public class Analyzer {
 		System.out.println("=============");
 		System.out.println("DOUBLED WORDS");
 		System.out.println("=============");
-		System.out.println("(Words that are written twice in a row.)");
+		System.out.println("(Words written twice in a row.)");
 		for (int i = 0; i < wordList.size() - 1; i++) {
 			// Was a word used twice in a row?
-			String w1 = wordList.get(i).stub1;
+			String w1 = wordList.get(i).word1;
+			String s1 = wordList.get(i).stub1;
 			if (w1.length() < 3)
 				continue;
-			String w2 = wordList.get(i + 1).stub1;
+			String w2 = wordList.get(i + 1).word1;
+			String s2 = wordList.get(i + 1).stub1;
 			if (w2.length() < 3)
 				continue;
-			if (w1.equals(w2) || w1.startsWith(w2) || w2.startsWith(w1))
-				System.out.println("Pos " + i + ": " + wordList.get(i).word1 + " " + wordList.get(i + 1).word1);
+			if (w1.length() >= w2.length() * 2 || w2.length() >= w1.length() * 2)
+				continue;
+			if (s1.equals(s2) || w1.startsWith(s2) || w2.startsWith(s1)) {
+				System.out.println("Pos " + i + ": " + w1 + " " + w2);
+				i += 2;
+			}
 		}
 		System.out.println("===============");
 		System.out.println("DOUBLED DOUBLES");
 		System.out.println("===============");
-		System.out.println("(Word pairs that are written twice in a row.)");
+		System.out.println("(Word pairs written twice in a row.)");
 		for (int i = 0; i < wordList.size() - 2; i++) {
 			// Was a word used twice in a row?
-			String w1 = wordList.get(i).stub2;
-			if (w1.length() < 4)
+			String w1 = wordList.get(i).word2;
+			String s1 = wordList.get(i).stub2;
+			if (s1.length() < 4)
 				continue;
-			String w2 = wordList.get(i + 2).stub2;
-			if (w2.length() < 4)
+			String w2 = wordList.get(i + 2).word2;
+			String s2 = wordList.get(i + 2).stub2;
+			if (s2.length() < 4)
 				continue;
-			if (w1.equals(w2) || w1.startsWith(w2) || w2.startsWith(w1))
-				System.out.println("Pos " + i + ": " + wordList.get(i).word2 + " + " + wordList.get(i + 2).word2);
+			if (w1.length() > w2.length() * 2 || w2.length() > w1.length() * 2)
+				continue;
+			if (s1.equals(s2)) {
+				System.out.println("Pos " + i + ": " + w1 + " + " + w2);
+				i += 3;
+			}
 		}
 		System.out.println("=============");
 		System.out.println("CLOSE DOUBLES");
 		System.out.println("=============");
-		System.out.println("(Word pairs that are written twice in a row with one or two words in between.)");
+		System.out.println("(Word pairs written twice in a row with one or two words in between.)");
 		for (int i = 0; i < wordList.size() - 4; i++) {
 			// Was a word used twice in a row?
-			String w1 = wordList.get(i).stub2;
+			String w1 = wordList.get(i).word2;
+			String s1 = wordList.get(i).stub2;
 			if (w1.length() < 5)
 				continue;
-			String w2 = wordList.get(i + 3).stub2;
+			String w2 = wordList.get(i + 1).word2;
+			String s2 = wordList.get(i + 1).stub2;
 			if (w2.length() < 5)
 				continue;
-			String w3 = wordList.get(i + 4).stub2;
+			String w3 = wordList.get(i + 4).word2;
+			String s3 = wordList.get(i + 4).stub2;
 			if (w3.length() < 5)
 				continue;
-			if (w1.equals(w2) || w1.startsWith(w2) || w2.startsWith(w1))
-				System.out.println("Pos " + i + ": " + wordList.get(i).word2 + " + " + wordList.get(i + 3).word2);
-			if (w1.equals(w3) || w1.startsWith(w3) || w3.startsWith(w1))
-				System.out.println("Pos " + i + ": " + wordList.get(i).word2 + " + " + wordList.get(i + 4).word2);
+			if (s1.equals(s2)) {
+				System.out.println("Pos " + i + ": " + w1 + " + " + w3);
+				i += 3;
+			}
+			if (s1.equals(s3)) {
+				System.out.println("Pos " + i + ": " + w1 + " + " + w3);
+				i += 4;
+			}
 		}
 	}
 
@@ -318,7 +347,7 @@ public class Analyzer {
 		System.out.println("GLOBAL SINGLE MATCHES");
 		System.out.println("=====================");
 		System.out.println(
-				"(Words that are used often throughout the text. Shorter words need to be more frequent to get listed.)");
+				"(Phonetically matching words used often throughout the text. Shorter words need to be more frequent to get listed. These words may also show up in longer combinations!)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA1 < 3)
 				continue;
@@ -346,13 +375,14 @@ public class Analyzer {
 		System.out.println("=====================");
 		System.out.println("GLOBAL DOUBLE MATCHES");
 		System.out.println("=====================");
-		System.out.println("(Combinations on two words that are used often throughout the text.)");
+		System.out.println(
+				"(Combinations of two phonetically matching words used often throughout the text. These words may also show up in longer combinations!)");
 		for (int i = 0; i < wordList.size(); i++) {
-			if (wordList.get(i).matchA2 < 3)
+			if (wordList.get(i).matchA2 < 4)
 				continue;
 			// if (wordList.get(i).word1.equals(""))
 			// continue;
-			if (wordList.get(i).matchA2 < wordList.size() / 5000)
+			if (wordList.get(i).matchA2 < wordList.size() / 6000)
 				continue;
 			System.out.println(wordList.get(i).matchA2 + ": " + wordList.get(i).word2 + wordList.get(i).variant2);
 		}
@@ -370,13 +400,14 @@ public class Analyzer {
 		System.out.println("======================");
 		System.out.println("GLOBAL TRIPPLE MATCHES");
 		System.out.println("======================");
-		System.out.println("(Combinations of three words that are used more than twice throughout the text.)");
+		System.out.println(
+				"(Combinations of three phonetically matching words used more than twice throughout the text. These words may also show up in longer combinations!)");
 		for (int i = 0; i < wordList.size(); i++) {
 			if (wordList.get(i).matchA3 < 3)
 				continue;
 			if (wordList.get(i).word1.equals(""))
 				continue;
-			if (wordList.get(i).matchA3 < wordList.size() / 7000)
+			if (wordList.get(i).matchA3 < wordList.size() / 12000)
 				continue;
 			System.out.println(wordList.get(i).matchA3 + ": " + wordList.get(i).word3 + wordList.get(i).variant3);
 		}
@@ -394,10 +425,14 @@ public class Analyzer {
 		System.out.println("========================");
 		System.out.println("GLOBAL QUADRUPLE MATCHES");
 		System.out.println("========================");
-		System.out.println("(Combinations of four words that are used more than once throughout the text.)");
+		System.out
+				.println("(Combinations of four phonetically matching words used more than once throughout the text.)");
 		for (int i = 0; i < wordList.size(); i++) {
-			if ((wordList.get(i).matchA4 < 2)
-					|| ((wordList.get(i).matchA4 == 2) && (wordList.get(i).word1.length() < 4)))
+			if (wordList.get(i).matchA4 < 2)
+				continue;
+			// if ((wordList.get(i).matchA4 < 2) && (wordList.get(i).word1.length() < 4))
+			// continue;
+			if (wordList.get(i).matchA4 < wordList.size() / 24000)
 				continue;
 			// if (wordList.get(i).word1.equals(""))
 			// continue;
@@ -405,16 +440,98 @@ public class Analyzer {
 		}
 	}
 
+	public static void unique(List<Word> wordList) {
+		int uniqueCount = 0;
+		int vocabCount = 0;
+
+		Comparator<Word> alphabetize = (Word a, Word b) -> {
+			return -b.word4.compareTo(a.word4);
+		};
+		Collections.sort(wordList, alphabetize);
+		System.out.println("=============");
+		System.out.println("ALLITERATIONS");
+		System.out.println("=============");
+		for (int i = 0; i < wordList.size(); i++) {
+			if (wordList.get(i).stub3.length() < 1)
+				continue;
+			String[] wordgroup = wordList.get(i).stub4.split(" ");
+			if (wordgroup.length < 3)
+				continue;
+			String c0 = wordgroup[0];
+			if (c0.length() < 1)
+				continue;
+			c0 = "" + c0.charAt(0);
+
+			String c1 = wordgroup[1];
+			if (c1.length() < 1)
+				continue;
+			c1 = "" + c1.charAt(0);
+
+			String c2 = wordgroup[2];
+			if (c2.length() < 1)
+				continue;
+			c2 = "" + c2.charAt(0);
+
+			String c3 = "";
+			if (wordgroup.length > 3) {
+				c3 = wordgroup[3];
+				if (c3.length() < 1)
+					continue;
+				c3 = "" + c3.charAt(0);
+
+			}
+			if ((c0.equals(c1) && c0.equals(c2)) /* || (isVowel(c0) && isVowel(c1) && isVowel(c2) && isVowel(c3)) */) {
+				if (c0.equals(c3) /* || (isVowel(c0) && isVowel(c1) && isVowel(c2) && isVowel(c3)) */) {
+					System.out.println(wordList.get(i).word4);
+					i += 4;
+				} else {
+					System.out.println(wordList.get(i).word3);
+					i += 3;
+				}
+			}
+		}
+
+		Comparator<Word> frequencyA1 = (Word a, Word b) -> {
+			return b.matchA1 - a.matchA1;
+		};
+		Collections.sort(wordList, frequencyA1);
+		System.out.println("============");
+		System.out.println("UNIQUE WORDS");
+		System.out.println("============");
+		System.out.println("(Words only used once in the entire text - not even any phonetically close matches!)");
+		for (int i = 0; i < wordList.size(); i++) {
+			if (wordList.get(i).checkA1 || wordList.get(i).check31)
+				continue;
+			vocabCount++;
+			if (wordList.get(i).matchA1 > 1)
+				continue;
+			String word = wordList.get(i).word1.replace("0", "").replace("1", "").replace("2", "").replace("3", "").replace("4", "").replace("5", "").replace("6", "").replace("7", "").replace("8", "").replace("9", "");
+			if(word.length() < 2)
+				continue;
+			uniqueCount++;
+			System.out.println(word);
+		}
+		System.out.println("Full vocabulary: " + vocabCount + " distinct words.");
+		System.out.println("Unique words: " + uniqueCount + " of " + wordList.size() + " words = "
+				+ String.format("%.2f", ((float) (uniqueCount * 10000) / wordList.size()) / 100) + "%");
+	}
+
 	public static void fullAnalysis(List<Word> wordList) {
+		// The first five methods work with the sequential list of words.
 		analyzeFile(wordList);
 		localSingles(wordList);
 		localDoubles(wordList);
 		localTripples(wordList);
 		doubledWords(wordList);
+
+		// The following four methods will re-sort all words.
 		globalSingles(wordList);
 		globalDoubles(wordList);
 		globalTripples(wordList);
 		globalQuadruples(wordList);
+
+		// This last method is mostly for fun.
+		unique(wordList);
 
 		System.out.println("=======");
 		System.out.println("THE END");
